@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package board;
+
+option go_package = "/board";
+
+message LikeCommentInfo {
+    string GiverID = 1;
+    bool isGiverLike = 2;
+    string ReceiverID = 3;
+    string CommentID = 4;
+}
+message ReleaseCommentInfo {
+    string UserID = 1;
+    string CommentID = 2;
+
+}
+message CollectBoardInfo {
+    string UserID = 1;
+    bool isCollect = 2;
+    string BoardID = 3;
+    string BoardTitle = 4;
+}
+message LikeBoardInfo {
+    string UserID = 1;
+    bool isLiked = 2;
+    string BoardID = 3;
+}
+
+message Response {
+    bool Result = 1;
+}
+
+service boardService {
+    rpc LikeComment(LikeCommentInfo) returns (Response);
+    rpc ReleaseComment(ReleaseCommentInfo) returns (Response);
+    rpc CollectBoard(CollectBoardInfo) returns (Response);
+    rpc LikeBoard(LikeBoardInfo) returns (Response);
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package petition;
+
+option go_package = "/petition";
+
+message SignBoard {
+    string SignBoardID = 1;
+    string userID = 2;
+    bool isSign = 3;
+}
+
+message LaunchBoard {
+    string userID = 1;
+}
+
+message Response {
+    bool result = 1;
+}
+
+service petitionService {
+    rpc AddSigningBoard(SignBoard) returns (Response);
+    rpc LaunchPetitionBoard(LaunchBoard) returns (Response);
+}

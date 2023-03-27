@@ -1,0 +1,99 @@
+version: "3"
+services:
+  auth-service:
+    build: 
+      context: ./../auth-service
+      dockerfile: ./../auth-service/auth-service.dockerfile
+      args:
+        - BUILD_CACHE=false
+    ports:
+    - "8080:80"
+    environment:
+      - user=****
+      - password=******
+      - SystemMail=*********@gmail.com
+      - SystemMailPassword=***********
+    depends_on:
+      - mongo_user
+      - redis_user
+    restart: always
+
+  board-service:
+    build:
+      context: ./../board-service
+      dockerfile: ./../board-service/board-service.dockerfile
+      args:
+        - BUILD_CACHE=false
+    ports:
+      - "8081:80"
+    depends_on:
+      - auth-service
+      - postgres
+    restart: always
+
+  petition-service:
+    build:
+      context: ./../petition-service
+      dockerfile: ./../petition-service/petition-service.dockerfile
+      args:
+        - BUILD_CACHE=false
+    ports:
+      - "8082:80"
+    environment:
+      - user=******
+      - password=*****
+    depends_on:
+      - auth-service
+      - mongo_petition
+    restart: always
+
+  mongo_user:
+    image: 'mongo:4.2.17-bionic'
+    ports:
+    - "27017:27017"
+    volumes:
+    - "./db-data/mongo/mongo_user:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=******
+      - MONGO_INITDB_ROOT_PASSWORD=******
+  
+  redis_user:
+    image: redis:latest
+    command: ["redis-server", "/etc/redis/redis.conf"]
+    volumes:
+      - ./db-data/redis/redis.conf:/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+
+  postgres:
+    image: postgres
+    volumes:
+      - "./db-data/postgres:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: ******
+      POSTGRES_PASSWORD: *******
+      POSTGRES_DB: *******
+    ports:
+      - "5432:5432"
+  
+  mongo_petition:
+    image: 'mongo:4.2.17-bionic'
+    ports:
+    - "27018:27017"
+    volumes:
+    - "./db-data/mongo/mongo_petition:/data/db"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=********
+      - MONGO_INITDB_ROOT_PASSWORD=*******
+
+  nginx_backend:
+    image: 'nginx'
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/backend/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - auth-service
+      - board-service
+      - petition-service
+  
