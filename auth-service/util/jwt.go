@@ -12,7 +12,7 @@ type MyClaims struct {
 	jwt.StandardClaims
 }
 
-var SecretKey = []byte("BackendEngineerSoTired")
+var SecretKey = []byte("********")
 
 func GenToken(account string) (string, error) {
 	c := MyClaims{
