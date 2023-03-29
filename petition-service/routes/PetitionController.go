@@ -98,7 +98,7 @@ func (p *PetitionController) SignBoard(c *gin.Context) {
 		res, err := connection.AddSigningBoard(ctx, &petition.SignBoard{
 			SignBoardID: requestData.BoardID,
 			UserID:      user_id,
-			IsSign:      false,
+			IsSign:      requestData.IsSupport,
 		})
 		if err != nil {
 			log.Println(err)
